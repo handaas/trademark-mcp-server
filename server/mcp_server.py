@@ -9,7 +9,7 @@ import sys
 
 load_dotenv()
 
-mcp = FastMCP("标讯大数据", instructions="标讯大数据",dependencies=["python-dotenv", "requests"])
+mcp = FastMCP("商标大数据", instructions="商标大数据",dependencies=["python-dotenv", "requests"])
 
 INTEGRATOR_ID = os.environ.get("INTEGRATOR_ID")
 SECRET_ID = os.environ.get("SECRET_ID")
@@ -60,166 +60,12 @@ def call_api(product_id: str, params: dict) -> dict:
     url = f'https://console.handaas.com/api/v1/integrator/call_api/{INTEGRATOR_ID}'
     try:
         response = requests.post(url, data=call_params)
-        return response.json().get("data", None) or response.json().get("msgCN", None)
+        return response.json().get("data", "查询为空")
     except Exception as e:
         return "查询失败"
     
 @mcp.tool()
-def bid_bigdata_bid_win_stats(matchKeyword: str, keywordType: str = None) -> dict:
-    """
-    根据企业名称、统一社会信用代码等获取企业标讯信息中中标信息统计项，包括标的分布、金额分布、区域分布及中标趋势等。如果没有企业全称则先调取fuzzy_search接口获取企业全称。
-
-
-    请求参数:
-    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id
-    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
-
-    返回参数:
-    - winbidAmountStatList: 中标金额分布 类型：list of dict
-    - range: 金额范围 类型：string
-    - percent: 比例 类型：float
-    - count: 数量 类型：int
-    - winbidAreaStat: 区域分布 类型：list of dict
-    - area: 区域 类型：int
-    - winbidStatList: 中标标的分布 类型：list of dict
-    - count: 数量 类型：int
-    - winbidTrend: 中标趋势 类型：list of dict
-    - percent: 比例 类型：float
-    - subjectMatter: 标的物 类型：string
-    - count: 数量 类型：int
-    - count: 数量 类型：int
-    - year: 年份 类型：int
-    """
-    # 构建请求参数
-    params = {
-        'matchKeyword': matchKeyword,
-        'keywordType': keywordType,
-    }
-
-    # 过滤None值
-    params = {k: v for k, v in params.items() if v is not None}
-
-    # 调用API
-    return call_api('6707813f7427e966078e391d', params)
-
-
-@mcp.tool()
-def bid_bigdata_bidding_info(matchKeyword: str, pageSize: int = 10, keywordType: str = None, pageIndex: int = None) -> dict:
-    """
-    该接口的功能是根据输入的企业标识符（企业名称、注册号、统一社会信用代码或企业id）和主体类型，查询并返回该企业参与的招投标信息，包括招投标公告类型、项目地区、公告详情及与之相关的企业信息。此接口的用途主要是在招投标信息管理系统中，帮助用户获取特定企业的招投标参与记录和项目详情，可用于企业信用审查、合作伙伴评估、市场竞争分析等场景。如果没有企业全称则先调取fuzzy_search接口获取企业全称。
-
-
-    请求参数:
-    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id
-    - pageSize: 分页大小 类型：int - 一页最多获取50条数据
-    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
-    - pageIndex: 页码 类型：int - 从1开始
-
-    返回参数:
-    - total: 总数 类型：int
-    - resultList: 结果列表 类型：list of dict
-    - biddingId: 招投标Id 类型：string
-    - infoType: 招投标公告类型 类型：string
-    - projectRegion: 项目地区 类型：dict
-    - publishDate: 公告发布时间 类型：int
-    - subjectMatterList: 标的物 类型：list of string
-    - title: 公告标题 类型：string
-    - role: 招投标角色 类型：string - 招标，中标
-    - projectAmount: 项目金额 类型：string
-    - winningBidderList: 中标企业 类型：list of dict
-    - name: 企业名称 类型：string
-    - nameId: 企业ID 类型：string
-    - purchasingBidderList: 招标企业 类型：list of dict
-    - name: 企业名称 类型：string
-    - nameId: 企业ID 类型：string
-    """
-    # 构建请求参数
-    params = {
-        'matchKeyword': matchKeyword,
-        'pageSize': pageSize,
-        'keywordType': keywordType,
-        'pageIndex': pageIndex,
-    }
-
-    # 过滤None值
-    params = {k: v for k, v in params.items() if v is not None}
-
-    # 调用API
-    return call_api('66bf124bf134a4c21b4fc2fa', params)
-
-
-@mcp.tool()
-def bid_bigdata_tender_stats(matchKeyword: str, keywordType: str = None) -> dict:
-    """
-    根据企业名称、统一社会信用代码等获取企业标讯信息中招标信息统计项，包括标的分布、金额分布、区域分布及招标趋势等。如果没有企业全称则先调取fuzzy_search接口获取企业全称。
-
-
-    请求参数:
-    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id
-    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
-
-    返回参数:
-    - tenderAmountStatList: 招标金额分布 类型：list of dict
-    - tenderAreaStat: 区域分布 类型：list of dict
-    - count: 数量 类型：int
-    - area: 区域 类型：int
-    - count: 数量 类型：int
-    - tenderStatList: 招标标的分布 类型：list of dict
-    - count: 数量 类型：int
-    - percent: 比例 类型：float
-    - range: 金额范围 类型：string
-    - percent: 比例 类型：float
-    - tenderTrend: 招标趋势 类型：list of dict
-    - count: 数量 类型：int
-    - year: 年份 类型：int
-    - subjectMatter: 标的物 类型：string
-    """
-    # 构建请求参数
-    params = {
-        'matchKeyword': matchKeyword,
-        'keywordType': keywordType,
-    }
-
-    # 过滤None值
-    params = {k: v for k, v in params.items() if v is not None}
-
-    # 调用API
-    return call_api('6707813f7427e966078e392f', params)
-
-
-@mcp.tool()
-def bid_bigdata_procurement_stats(matchKeyword: str, keywordType: str = None) -> dict:
-    """
-    该接口可以根据企业名称或ID，获取企业采购统计信息，包括采购产品分布、采购区域分布、采购数量、地区、占比、产品名称、客户数等，可以应用于市场分析、供应链优化、采购决策等领域，帮助企业了解采购趋势和市场分布。如果没有企业全称则先调取fuzzy_search接口获取企业全称。
-
-    请求参数:
-    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
-    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id
-
-    返回参数:
-    - purchasingProductStatList: 采购产品分布 类型：list of dict
-    - count: 采购数量 类型：int
-    - percent: 占比 类型：float
-    - product: 产品名称 类型：string
-    - purchasingAreaStatList: 采购区域分布 类型：list of dict
-    - times: 客户数 类型：int
-    - area: 地区 类型：string
-    """
-    # 构建请求参数
-    params = {
-        'keywordType': keywordType,
-        'matchKeyword': matchKeyword,
-    }
-
-    # 过滤None值
-    params = {k: v for k, v in params.items() if v is not None}
-
-    # 调用API
-    return call_api('6725e5b9ba65854594baebbc', params)
-
-
-@mcp.tool()
-def bid_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = 1, pageSize: int = None) -> dict:
+def trademark_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = None, pageSize: int = None) -> dict:
     """
     该接口的功能是根据提供的企业名称、人名、品牌、产品、岗位等关键词模糊查询相关企业列表。返回匹配的企业列表及其详细信息，用于查找和识别特定的企业信息。
 
@@ -262,7 +108,6 @@ def bid_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = 1, pageSize: in
     - catchReason.certNameList: 资质证书 类型：list of string
     - catchReason.prmtKeys: 推广关键词 类型：list of string
     - catchReason.socialCreditCode: 统一社会信用代码 类型：list of string
-
     """
     # 构建请求参数
     params = {
@@ -279,94 +124,81 @@ def bid_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = 1, pageSize: in
 
 
 @mcp.tool()
-def bid_bigdata_bid_search(matchKeyword: str = None, biddingType: str = None, biddingRegion: str = None,
-               biddingAnncPubStartTime: str = None, biddingAnncPubEndTime: str = None, searchMode: str = None,
-               biddingProjectMaxAmount: float = None, biddingPurchasingType: str = None,
-               biddingProjectMinAmount: float = None, pageIndex: int = 1, pageSize: int = None) -> dict:
+def trademark_bigdata_trademark_search(matchKeyword: str, keywordType: str = None,
+                     tmStatus: str = None, pageIndex: int = 1, pageSize: int = 10) -> dict:
     """
-    该接口用于查询和筛选招投标信息，通过提供多种过滤条件如招标类型、招标单位类型、地理位置、项目金额范围等，返回符合条件的招投标公告详细信息，常用于政府、企业采购部门或相关单位进行招投标管理和分析。用户可以实时了解最新的招投标动态，以便决策和业务拓展。场景包括政府采购人员查询合适的招标项目，企业查找投标机会，以及分析招投标市场趋势等。
+    该接口为用户提供商标信息的搜索功能，用户可以根据商标名称、申请号、申请人名称或代理机构名称等条件进行查询，并通过商标状态进一步过滤结果。该接口特别适合于商标代理机构、企业或法律咨询公司在进行商标查询、情况分析和状态跟踪时使用，它帮助用户快速定位所需的商标信息，并了解商标的当前状态、申请和注册信息，从而便于后续的商标管理和法律事务处理。特别是在商标申请、品牌保护及市场竞争分析等场景下，这一接口能够显著提高工作效率和信息利用的准确度。
 
 
     请求参数:
-    - matchKeyword: 搜索关键词 类型：string - 默认按最新发布时间返回全部
-    - biddingType: 信息类型 类型：string - 招标类型枚举（招标预告，招标公告，变更补充，中标公告，采购意向，废标终止），可多选，输入格式举例：["招标预告","招标公告","采购意向"]
-    - biddingRegion: 项目地区 类型：string - 多选，支持省份，城市，输入格式举例：[["福建省","厦门市"],["贵州省","安顺市"]]
-    - biddingAnncPubStartTime: 发布开始日期 类型：string - 招投标公告发布开始时间，格式：“2024-08-01”
-    - biddingAnncPubEndTime: 发布结束日期 类型：string - 招投标公告发布结束时间，格式：“2024-11-01”
-    - searchMode: 搜索模式 类型：select - 搜索模式枚举（标题匹配，标的物匹配，全文匹配）
-    - biddingProjectMaxAmount: 项目金额最大值 类型：float - 项目金额最大值，单位：万
-    - biddingPurchasingType: 招标单位类型 类型：string - 招标单位类型枚举（政府，学校，医院，公安，部队，企业），可输入多个用英文逗号分隔，输入格式举例：“政府,学校”
-    - biddingProjectMinAmount: 项目金额最小值 类型：float - 项目金额最小值，单位：万
-    - pageIndex: 分页索引 类型：int
-    - pageSize: 分页大小 类型：int - 一页最多获取50条
+    - matchKeyword: 匹配关键词 类型：string - 商标名称/申请号/申请人名称/代理机构名称
+    - keywordType: 搜索方式 类型：select - 搜索方式枚举（商标名称，申请号，申请人，代理机构，默认匹配全部)
+    - pageIndex: 页码 类型：int - 从1开始
+    - pageSize: 分页大小 类型：int - 一页最多获取50条数据
+    - tmStatus: 商标状态 类型：select - 商标状态枚举（驳回复审中，撤销/无效宣告申请审查中，初审公告，等待驳回复审，等待实质审查，商标申请中，商标无效，商标已注册，商标异议中）
 
     返回参数:
-    - biddingAnncTitle: 公告标题 类型：string
-    - biddingContent: 正文 类型：string
-    - resultList: 结果列表 类型：list of dict
-    - total: 总数 类型：int
-    - biddingId: 公告id 类型：string
-    - biddingInfoType: 公告类型 类型：string
-    - biddingProjectType: 项目类型 类型：string
-    - biddingPublishTime: 公告时间 类型：string
-    - biddingEndTime: 招标截止时间 类型：string
-    - biddingProjectID: 项目编号 类型：string
-    - biddingAgentInfoList: 招标代理机构信息列表 类型：list of dict
-    - biddingPurchasingInfoList: 招标单位相关信息列表 类型：list of dict
-    - biddingWinningInfoList: 中标单位相关信息列表 类型：list of dict
-    - biddingRegion: 招投标所属地区 类型：string
-    - hasFile: 有无附件 类型：int
+    - resultList: 结果列表 类型：list of dict - 商标列表
+    - _id: 商标id 类型：string
+    - tmAgentName: 代理机构名称 类型：string
+    - tmAgentNameId: 代理机构id 类型：string
+    - tmCompanyNameId: 申请人id 类型：string
+    - tmName: 商标名称 类型：string
+    - tmImage: 商标图片链接 类型：string
+    - tmApplicationTime: 申请日期 类型：string
+    - tmCompanyName: 申请人名称 类型：string
+    - tmRegNum: 申请号 类型：string
+    - tmRegTime: 注册日期 类型：string
+    - tmServiceContents: 商品服务项 类型：list of dict
+    - similarGroup: 相似群组 类型：string
+    - tmSingleInternationalClass: 国际分类 类型：string
+    - detail: 明细 类型：string
+    - tmSpecialBeginDate: 专用权开始日期 类型：string
+    - tmSpecialEndDate: 专用权截止日期 类型：string
+    - internationalClass: 国际分类 类型：string
+    - code: 编码 类型：string
+    - tmStatus: 商标状态 类型：string
+    - tmTrialTime: 初审公告日期 类型：string
+    - total: 总数 类型：int - 商标数量
     """
     # 构建请求参数
     params = {
         'matchKeyword': matchKeyword,
-        'biddingType': biddingType,
-        'biddingRegion': biddingRegion,
-        'biddingAnncPubStartTime': biddingAnncPubStartTime,
-        'biddingAnncPubEndTime': biddingAnncPubEndTime,
-        'searchMode': searchMode,
-        'biddingProjectMaxAmount': biddingProjectMaxAmount,
-        'biddingPurchasingType': biddingPurchasingType,
-        'biddingProjectMinAmount': biddingProjectMinAmount,
+        'keywordType': keywordType,
         'pageIndex': pageIndex,
         'pageSize': pageSize,
+        'tmStatus': tmStatus,
     }
 
     # 过滤None值
     params = {k: v for k, v in params.items() if v is not None}
 
     # 调用API
-    return call_api('66bf124bf134a4c21b4fc34c', params)
+    return call_api('66b485eadaf8c77fb249a3cc', params)
 
 
 @mcp.tool()
-def bid_bigdata_planned_projects(matchKeyword: str, pageIndex: int = 1, pageSize: int = 10, keywordType: str = None) -> dict:
+def trademark_bigdata_trademark_profile(matchKeyword: str, keywordType: str = None) -> dict:
     """
-    该接口用于查询企业拟建公告的信息，提供了通过企业名称、注册号、社会信用代码或企业ID等多种方式检索拟建项目的相关详情。典型使用场景包括政府部门或行业协会在监管和分析企业拟建项目情况时，通过该接口获取企业的拟建公告及详细信息，以便进行统计分析、市场研究和行业动向监控，支持决策制定和政策出台。通过这一接口，用户可以高效地访问到关于某个企业在建或拟建项目的时效性和区域性信息，有助于提升信息获取的便利性和准确性。
+    该接口的功能是根据输入的企业标识信息（如企业名称、注册号等），返回与该企业相关的商标概况信息，包括商标总数、商标类别、商标状态列表等。这一接口的主要用途在于帮助企业、法律顾问、知识产权代理机构、竞争对手和市场研究人员快速获取某企业的商标注册情况，以便进行市场分析、竞争对手跟踪、企业决策、风险评估及品牌保护等场景。这可用于企业在商标管理过程中，监控自己的商标资产，或用于竞争对手分析，通过了解竞争对手的商标布局判断其市场策略。
 
 
     请求参数:
-    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id
-    - pageIndex: 页码 类型：int - 从1开始
-    - pageSize: 分页大小 类型：int - 一页最多获取50条数据
-    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
+    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id，如果没有企业全称则先调取fuzzy_search接口获取企业全称。
+    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码)
 
     返回参数:
-    - total: 总数 类型：int
-    - ppId: 项目id 类型：string
-    - resultList: 结果列表 类型：list of dict
-    - deviceList: 待采设备 类型：list of string
-    - ppRegion: 建设地点 类型：dict
-    - ppTitle: 项目名称 类型：string
-    - ppContent: 项目内容 类型：string
-    - ppPublishTime: 发布时间 类型：string
-    - ppApprovalTime: 评审时间 类型：string
+    - tmTypeList: 涵盖商标类别 类型：list of string
+    - tmCount: 商标数量 类型：int
+    - tmNumberThisYear: 最近一年申请商标数 类型：int
+    - tmInvalidNumber: 无效商标数 类型：int
+    - tmStatusList: 商标状态列表 类型：list of srting
+    - tmValidNumber: 有效商标数 类型：int
+    - tmStatusStat: 商标状态统计 类型：dict
     """
     # 构建请求参数
     params = {
         'matchKeyword': matchKeyword,
-        'pageIndex': pageIndex,
-        'pageSize': pageSize,
         'keywordType': keywordType,
     }
 
@@ -374,7 +206,44 @@ def bid_bigdata_planned_projects(matchKeyword: str, pageIndex: int = 1, pageSize
     params = {k: v for k, v in params.items() if v is not None}
 
     # 调用API
-    return call_api('66f3d8c064bd2be52d68a134', params)
+    return call_api('671357d127ab3417e1f3f21b', params)
+
+
+@mcp.tool()
+def trademark_bigdata_trademark_stats(matchKeyword: str, keywordType: str = None) -> dict:
+    """
+    该接口的功能是根据输入的企业相关信息（如企业名称、注册号、统一社会信用代码或企业ID）和主体类型，返回该企业的商标申请趋势、商标注册趋势、商标状态统计及商标类别统计等信息。该接口的用途在于帮助企业了解自身或竞争对手在商标申请和注册方面的动态，为市场分析、竞争战略制定提供数据支持。
+
+
+    请求参数:
+    - matchKeyword: 匹配关键词 类型：string - 企业名称/注册号/统一社会信用代码/企业id，如果没有企业全称则先调取fuzzy_search接口获取企业全称。
+    - keywordType: 主体类型 类型：select - 主体类型枚举（name：企业名称，nameId：企业id，regNumber：注册号，socialCreditCode：统一社会信用代码）
+
+    返回参数:
+    - year: 年份 类型：string
+    - tmRegTimeStat: 商标注册趋势 类型：list of dict
+    - tmAppTimeStat: 商标申请趋势 类型：list of dict
+    - count: 商标数量 类型：int
+    - count: 商标数量 类型：int
+    - year: 年份 类型：string
+    - tmStatusStat: 商标状态统计 类型：list of dict
+    - tmStatus: 商标状态 类型：string
+    - count: 商标数量 类型：int
+    - count: 商标数量 类型：int
+    - tmTypeStats: 商标类别统计 类型：list of dict
+    - tmName: 商标类别 类型：string
+    """
+    # 构建请求参数
+    params = {
+        'matchKeyword': matchKeyword,
+        'keywordType': keywordType,
+    }
+
+    # 过滤None值
+    params = {k: v for k, v in params.items() if v is not None}
+
+    # 调用API
+    return call_api('66d5b7df537c3f61d646c2dc', params)
 
 
 if __name__ == "__main__":
