@@ -77,7 +77,6 @@ def trademark_bigdata_fuzzy_search(matchKeyword: str, pageIndex: int = None, pag
 
     返回参数:
     - total: 总数 类型：int
-    - resultList: 结果列表 类型：list of dict
     - annualTurnover: 年营业额 类型：string
     - formerNames: 曾用名 类型：list of string
     - address: 注册地址 类型：string
@@ -138,7 +137,6 @@ def trademark_bigdata_trademark_search(matchKeyword: str, keywordType: str = Non
     - tmStatus: 商标状态 类型：select - 商标状态枚举（驳回复审中，撤销/无效宣告申请审查中，初审公告，等待驳回复审，等待实质审查，商标申请中，商标无效，商标已注册，商标异议中）
 
     返回参数:
-    - resultList: 结果列表 类型：list of dict - 商标列表
     - _id: 商标id 类型：string
     - tmAgentName: 代理机构名称 类型：string
     - tmAgentNameId: 代理机构id 类型：string
