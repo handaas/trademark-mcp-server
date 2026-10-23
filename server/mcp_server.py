@@ -9,7 +9,7 @@ import sys
 
 load_dotenv()
 
-mcp = FastMCP("商标大数据", instructions="商标大数据", dependencies=["python-dotenv", "requests"])
+mcp = FastMCP("商标注册信息", instructions="商标注册信息", dependencies=["python-dotenv", "requests"])
 
 INTEGRATOR_ID = os.environ.get("INTEGRATOR_ID")
 SECRET_ID = os.environ.get("SECRET_ID")
